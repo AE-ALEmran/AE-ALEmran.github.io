@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/profile.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Md. Al Emran | Electrical Engineer & Researcher | AI, Power Systems & DWDM</title>
+    <meta name="description" content="Official personal portfolio & research repository of Md. Al Emran — B.Sc. in Electrical and Electronic Engineering (PUST), DWDM Network Engineer at Fiber@Home Ltd., former IEEE PUST Student Branch Chair, and researcher in AI-driven Power Systems, Microgrids, and Deep Learning." />
+    <meta name="keywords" content="Md Al Emran, Electrical Engineer, Researcher, AI Power Systems, Smart Grids, DWDM Network Engineer, Fiber@Home, PUST EEE, Deep Learning, Cognitive Neurodynamics, IEEE, Bangladesh" />
+    <meta name="author" content="Md. Al Emran" />
+
+    <!-- Open Graph / Social Meta -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Md. Al Emran | Electrical Engineer & AI Researcher" />
+    <meta property="og:description" content="Research portfolio, publications in Springer & IEEE, DWDM engineering at Fiber@Home Ltd., and academic projects." />
+    <meta property="og:image" content="/profile.png" />
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prevent Theme Flash -->
+    <script>
+      try {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 dark:bg-navy-950 dark:text-slate-100 antialiased selection:bg-brand-500 selection:text-white transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
