@@ -1,6 +1,5 @@
-md-al-emran.github.io
+[![Live Website](https://img.shields.io/badge/Live%20Website-ae--alemran.github.io-0ea5e9?style=for-the-badge&logo=googlechrome&logoColor=white)](https://ae-alemran.github.io/)
 
-<<<<<<< HEAD
 # Md. Al Emran — Professional Personal Portfolio & Research Repository
 
 A modern, responsive, research-oriented personal portfolio website and academic repository for **Md. Al Emran**, an Electrical and Electronic Engineering graduate from Pabna University of Science and Technology (PUST), DWDM Network Engineer at Fiber@Home Ltd., former IEEE PUST Student Branch Chair, and active researcher in AI applications for Power Systems, Renewable Energy, and Smart Grids.
@@ -159,7 +158,3 @@ d:\Emran\Personal Website/
 
 ## 📄 License & Attribution
 Designed and built for **Md. Al Emran**. All academic publications and institutional details are verified from official academic and corporate credentials.
-=======
-# md-al-emran.github.io
-Personal Portfolio Website – Md. Al Emran
->>>>>>> 8aa0eac1ede639da0085d82bcb3dfeea294c1611
