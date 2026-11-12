@@ -45,32 +45,32 @@ A private, password-protected CMS dashboard that allows Md. Al Emran to update t
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Quick Start Guide (Run Locally)
 
-### Prerequisites
-- Node.js (v18 or v20+)
-- npm (v9+)
+### Option A: One-Click Instant Launch (Fastest)
+Simply double-click the batch file in Windows Explorer:
+- **`run-website.bat`**: Instantly starts the local server and opens **`http://localhost:5173`** in your default web browser.
+- **`run-dev.bat`**: Starts the Vite hot-reloading development server (`npm run dev`).
+- **`run-build.bat`**: Recompiles the production build into `/dist`.
 
-### Installation
+---
+
+### Option B: Command Line (PowerShell or Terminal)
+
+#### 1. Instant Preview / Local Server:
 ```bash
-# Clone the repository
-git clone https://github.com/alemranak13/personal-portfolio.git
-cd personal-portfolio
+python serve.py
+```
+Open **`http://localhost:5173/`** in your browser.
 
-# Install dependencies
-npm install
-
-# Start local development server
+#### 2. Full Development Server with Hot Module Reloading:
+```bash
 npm run dev
 ```
-Open your browser at `http://localhost:5173/` (or the port shown in terminal).
 
-### Production Build
+#### 3. Production Build:
 ```bash
-# Compile TypeScript and bundle with Vite
 npm run build
-
-# Preview production build locally
 npm run preview
 ```
 
@@ -102,17 +102,10 @@ npm run preview
 3. Publish directory: `dist`
 4. Deploy!
 
-### Option 3: GitHub Pages
-1. In `vite.config.ts`, ensure `base: './'` or your repo path is configured.
-2. Install `gh-pages`:
-   ```bash
-   npm install -D gh-pages
-   ```
-3. Add to `package.json` scripts:
-   ```json
-   "deploy": "npm run build && gh-pages -d dist"
-   ```
-4. Run `npm run deploy`.
+### Option 3: GitHub Pages (Pre-configured with GitHub Actions)
+1. `vite.config.ts` (`base: './'`) and `.github/workflows/deploy.yml` are already configured for automated builds.
+2. Double-click **`publish-to-github.bat`** to sign in via GitHub browser OAuth, push to your repository, and enable GitHub Actions deployment.
+3. Or manually push to GitHub, then open **Settings → Pages → Source: GitHub Actions**.
 
 ---
 

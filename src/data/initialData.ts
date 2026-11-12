@@ -14,10 +14,10 @@ export const initialPortfolioData: PortfolioData = {
     email: "alemranak13@gmail.com",
     phone: "+8801778332062",
     location: "Dhaka / Chapainawabganj, Bangladesh",
-    profileImage: "/profile.png",
+    profileImage: "./profile.png",
     bannerImage: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1600&q=80",
-    resumePdfUrl: "/Md_Al_Emran_CV.pdf",
-    academicResumePdfUrl: "/Md_Al_Emran_Academic_CV.pdf",
+    resumePdfUrl: "./Md_Al_Emran_CV.pdf",
+    academicResumePdfUrl: "./Md_Al_Emran_Academic_CV.pdf",
     socialLinks: {
       linkedin: "https://www.linkedin.com/in/md-al-emran-eee/",
       googleScholar: "https://scholar.google.com/citations?user=MdAlEmran",
