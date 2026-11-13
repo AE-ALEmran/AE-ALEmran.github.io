@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { Shield, Lock, Eye, EyeOff, ArrowLeft, KeyRound, AlertCircle, Sparkles } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, ArrowLeft, KeyRound, AlertCircle } from 'lucide-react';
 
 export const AdminLogin: React.FC = () => {
   const { loginAdmin, setActiveView } = usePortfolio();
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password) return;
-    const success = loginAdmin(password);
-    if (!success) {
-      setError(true);
-    } else {
-      setError(false);
+    if (!password || isLoading) return;
+    setIsLoading(true);
+    try {
+      const success = await loginAdmin(password);
+      if (!success) {
+        setError(true);
+      } else {
+        setError(false);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -89,23 +95,13 @@ export const AdminLogin: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-sky-600 hover:from-brand-500 hover:to-sky-500 text-white font-semibold text-sm shadow-md hover:shadow-brand-500/25 transition-all flex items-center justify-center space-x-2"
+              disabled={isLoading}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-sky-600 hover:from-brand-500 hover:to-sky-500 text-white font-semibold text-sm shadow-md hover:shadow-brand-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <KeyRound className="w-4 h-4" />
-              <span>Unlock Admin Dashboard</span>
+              <span>{isLoading ? 'Verifying...' : 'Unlock Admin Dashboard'}</span>
             </button>
           </form>
-
-          {/* Quick Access Note */}
-          <div className="p-3 rounded-xl bg-slate-50 dark:bg-navy-950/80 border border-slate-200/60 dark:border-navy-800/60 text-[11px] text-slate-500 dark:text-slate-400 space-y-1">
-            <div className="font-semibold text-slate-700 dark:text-slate-300 flex items-center space-x-1">
-              <Sparkles className="w-3 h-3 text-brand-500" />
-              <span>Default Passkey</span>
-            </div>
-            <p>
-              Default access passkey is <code className="font-mono px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold">emran2026</code>. You can change this anytime inside Admin Settings.
-            </p>
-          </div>
 
         </div>
       </div>

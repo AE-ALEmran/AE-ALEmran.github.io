@@ -20,7 +20,7 @@ interface PortfolioContextType {
   isAdminLoggedIn: boolean;
   activeView: 'portfolio' | 'admin';
   setActiveView: (view: 'portfolio' | 'admin') => void;
-  loginAdmin: (password: string) => boolean;
+  loginAdmin: (password: string) => Promise<boolean>;
   logoutAdmin: () => void;
   updateProfile: (profile: PortfolioProfile) => void;
   // Publications
@@ -57,13 +57,22 @@ interface PortfolioContextType {
   exportDataJSON: () => string;
   importDataJSON: (jsonString: string) => boolean;
   resetToDefaultData: () => void;
-  setAdminPassword: (newPassword: string) => void;
+  setAdminPassword: (newPassword: string) => Promise<void>;
 }
 
 const STORAGE_KEY = 'emran_portfolio_data_v1';
 const PASSKEY_KEY = 'emran_admin_passkey_v1';
 const AUTH_SESSION_KEY = 'emran_admin_session_v1';
-const DEFAULT_PASSKEY = 'emran2026';
+// SHA-256 hash of the default passkey — plaintext is never stored or compared directly
+const DEFAULT_PASSKEY_HASH = '978a93771473ad4c59b91e581e292f5f664ee16e9619d3f4406d51e5d2eb9fba';
+
+async function hashPasskey(passkey: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(passkey);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
@@ -137,9 +146,16 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  const loginAdmin = (password: string): boolean => {
-    const savedPasskey = localStorage.getItem(PASSKEY_KEY) || DEFAULT_PASSKEY;
-    if (password === savedPasskey || password === 'admin@pust' || password === 'emran@2026') {
+  const loginAdmin = async (password: string): Promise<boolean> => {
+    const inputHash = await hashPasskey(password);
+    let savedHash = localStorage.getItem(PASSKEY_KEY);
+    // Auto-migrate: if stored value is old plaintext (not 64-char hex), re-hash it
+    if (savedHash && savedHash.length !== 64) {
+      savedHash = await hashPasskey(savedHash);
+      localStorage.setItem(PASSKEY_KEY, savedHash);
+    }
+    if (!savedHash) savedHash = DEFAULT_PASSKEY_HASH;
+    if (inputHash === savedHash) {
       setIsAdminLoggedIn(true);
       sessionStorage.setItem(AUTH_SESSION_KEY, 'authenticated');
       return true;
@@ -156,8 +172,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
-  const setAdminPassword = (newPassword: string) => {
-    localStorage.setItem(PASSKEY_KEY, newPassword);
+  const setAdminPassword = async (newPassword: string): Promise<void> => {
+    const hash = await hashPasskey(newPassword);
+    localStorage.setItem(PASSKEY_KEY, hash);
   };
 
   const updateProfile = (profile: PortfolioProfile) => {

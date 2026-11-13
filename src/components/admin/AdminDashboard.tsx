@@ -263,13 +263,13 @@ export const AdminDashboard: React.FC = () => {
   const [newPasskey, setNewPasskey] = useState('');
   const [importJsonText, setImportJsonText] = useState('');
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPasskey || newPasskey.length < 4) {
       alert('Password must be at least 4 characters');
       return;
     }
-    setAdminPassword(newPasskey);
+    await setAdminPassword(newPasskey);
     setNewPasskey('');
     showToast('Admin passkey successfully updated!');
   };

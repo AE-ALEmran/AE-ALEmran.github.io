@@ -81,9 +81,7 @@ npm run preview
 ## 🔐 Admin Panel Access
 
 1. Navigate to `/#admin` or click the **Admin Portal** shield icon in the top navigation bar or footer.
-2. Enter the administrator passkey:
-   - **Default Passkey:** `emran2026`
-   *(You can change this passkey at any time inside the Admin Settings tab)*.
+2. Enter your administrator passkey (set during first-time setup via Admin Settings).
 3. Make changes to any section (publications, bio, research interests, announcements).
 4. All changes immediately reflect across the public portfolio!
 
