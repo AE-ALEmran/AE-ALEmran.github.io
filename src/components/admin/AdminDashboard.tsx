@@ -38,8 +38,12 @@ import {
   Sparkles,
   Shield,
   Sun,
-  Moon
+  Moon,
+  Loader2,
+  Copy,
+  FileCode
 } from 'lucide-react';
+import { compressImage } from '../../utils/imageCompressor';
 
 export const AdminDashboard: React.FC = () => {
   const { 
@@ -91,6 +95,12 @@ export const AdminDashboard: React.FC = () => {
   // PROFILE TAB STATE
   // -------------------------------------------------------------
   const [profileForm, setProfileForm] = useState<PortfolioProfile>({ ...data.profile });
+  const [isCompressingPhoto, setIsCompressingPhoto] = useState(false);
+
+  // Keep form synchronized if underlying data changes (e.g. IndexedDB hydration)
+  React.useEffect(() => {
+    setProfileForm({ ...data.profile });
+  }, [data.profile]);
 
   const handleProfileSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,19 +108,36 @@ export const AdminDashboard: React.FC = () => {
     showToast('Profile information successfully saved!');
   };
 
-  // Image file reader for custom local uploads
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Image file reader with automatic canvas compression (reduces 5MB to ~40KB)
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    setIsCompressingPhoto(true);
+    showToast('Compressing and optimizing photo for web...');
+
+    try {
+      const result = await compressImage(file, 800, 800, 0.82);
+      setProfileForm(prev => ({
+        ...prev,
+        profileImage: result.dataUrl
+      }));
+      showToast(
+        `Photo optimized: ${result.originalSizeKb} KB → ${result.compressedSizeKb} KB (${result.compressionRatio}% smaller)! Click "Save Profile Changes" to persist.`
+      );
+    } catch (err) {
+      console.warn('Image compression fallback:', err);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileForm({
-          ...profileForm,
+        setProfileForm(prev => ({
+          ...prev,
           profileImage: reader.result as string
-        });
+        }));
         showToast('Photo uploaded! Click "Save Profile Changes" to persist.');
       };
       reader.readAsDataURL(file);
+    } finally {
+      setIsCompressingPhoto(false);
     }
   };
 
@@ -284,6 +311,24 @@ export const AdminDashboard: React.FC = () => {
     a.click();
     URL.revokeObjectURL(url);
     showToast('JSON Backup downloaded!');
+  };
+
+  const handleDownloadInitialData = () => {
+    const fileContent = `import { PortfolioData } from '../types/portfolio';\n\nexport const initialPortfolioData: PortfolioData = ${JSON.stringify(data, null, 2)};\n`;
+    const blob = new Blob([fileContent], { type: 'text/typescript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'initialData.ts';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Downloaded initialData.ts! Place in src/data/ to deploy for everyone.');
+  };
+
+  const handleCopyCode = () => {
+    const fileContent = `import { PortfolioData } from '../types/portfolio';\n\nexport const initialPortfolioData: PortfolioData = ${JSON.stringify(data, null, 2)};\n`;
+    navigator.clipboard.writeText(fileContent);
+    showToast('Copied full initialData.ts code to clipboard!');
   };
 
   const handleImport = () => {
@@ -695,10 +740,25 @@ export const AdminDashboard: React.FC = () => {
                           className="flex-1 px-3 py-2 text-xs rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-800 text-slate-900 dark:text-white"
                           placeholder="/profile.png or URL"
                         />
-                        <label className="px-3 py-2 rounded-xl bg-slate-200 dark:bg-navy-800 text-slate-700 dark:text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-300 dark:hover:bg-navy-700 flex items-center space-x-1 shrink-0">
-                          <Upload className="w-3.5 h-3.5" />
-                          <span>Upload File</span>
-                          <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                        <label className={`px-3 py-2 rounded-xl bg-slate-200 dark:bg-navy-800 text-slate-700 dark:text-slate-300 text-xs font-semibold cursor-pointer hover:bg-slate-300 dark:hover:bg-navy-700 flex items-center space-x-1 shrink-0 ${isCompressingPhoto ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                          {isCompressingPhoto ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-500" />
+                              <span>Optimizing...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="w-3.5 h-3.5" />
+                              <span>Upload File</span>
+                            </>
+                          )}
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            disabled={isCompressingPhoto}
+                            onChange={handlePhotoUpload} 
+                            className="hidden" 
+                          />
                         </label>
                       </div>
                     </div>
@@ -1601,6 +1661,36 @@ export const AdminDashboard: React.FC = () => {
                     Import JSON
                   </button>
                 </div>
+              </div>
+
+              {/* Deploy to GitHub Pages for All Visitors */}
+              <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/20 space-y-3 text-xs">
+                <div className="font-bold text-slate-900 dark:text-white text-sm flex items-center space-x-2">
+                  <FileCode className="w-4 h-4 text-emerald-500" />
+                  <span>Make Edits Live for All Visitors (GitHub Pages)</span>
+                </div>
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Your changes are automatically saved in your browser storage (IndexedDB & LocalStorage). To make your changes permanent for <strong>all visitors worldwide</strong> on GitHub Pages (<code className="font-mono text-brand-500">https://ae-alemran.github.io/</code>):
+                </p>
+                <div className="flex flex-wrap gap-2.5 pt-1">
+                  <button
+                    onClick={handleDownloadInitialData}
+                    className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-sm transition-all"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download updated initialData.ts</span>
+                  </button>
+                  <button
+                    onClick={handleCopyCode}
+                    className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-navy-800 hover:bg-slate-300 dark:hover:bg-navy-700 text-slate-700 dark:text-slate-200 font-semibold transition-all"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copy initialData.ts Code</span>
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                  Tip: You can also copy the code or tell Antigravity in chat to "commit my latest changes to GitHub" and it will be pushed automatically!
+                </p>
               </div>
 
               {/* Cloud Database Guide (Supabase / Firebase) */}

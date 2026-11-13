@@ -12,6 +12,12 @@ import {
   ContactMessage 
 } from '../types/portfolio';
 import { initialPortfolioData } from '../data/initialData';
+import { 
+  loadFromLocalStorage, 
+  loadFromIndexedDB, 
+  savePortfolioStorage, 
+  clearPortfolioStorage 
+} from '../utils/storage';
 
 interface PortfolioContextType {
   data: PortfolioData;
@@ -94,30 +100,38 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return 'portfolio';
   });
 
-  // Main portfolio data state with localStorage persistence
+  // Main portfolio data state with instant synchronous localStorage read
   const [data, setData] = useState<PortfolioData>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        // Ensure publications and profile exist
-        if (parsed.profile && parsed.publications) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Failed to parse stored portfolio data', e);
-    }
+    const local = loadFromLocalStorage();
+    if (local) return local;
     return initialPortfolioData;
   });
 
-  // Save to localStorage on change
+  // Dual-storage update helper: updates React state AND immediately persists to localStorage + IndexedDB
+  const updateData = (updater: (prev: PortfolioData) => PortfolioData) => {
+    setData(prev => {
+      const next = updater(prev);
+      savePortfolioStorage(next);
+      return next;
+    });
+  };
+
+  // Asynchronously hydrate from IndexedDB on initial mount (in case localStorage had quota limits)
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.error('Failed to save portfolio data to localStorage', e);
-    }
+    let active = true;
+    loadFromIndexedDB().then((idbData) => {
+      if (active && idbData) {
+        setData(idbData);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Sync to dual storage as fallback whenever data reference changes
+  useEffect(() => {
+    savePortfolioStorage(data);
   }, [data]);
 
   // Sync theme with HTML document class
@@ -178,12 +192,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const updateProfile = (profile: PortfolioProfile) => {
-    setData(prev => ({ ...prev, profile }));
+    updateData(prev => ({ ...prev, profile }));
   };
 
   // Publications
   const addPublication = (publication: Publication) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       publications: [publication, ...prev.publications],
       profile: {
@@ -198,14 +212,14 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const updatePublication = (updated: Publication) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       publications: prev.publications.map(p => p.id === updated.id ? updated : p)
     }));
   };
 
   const deletePublication = (id: string) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       publications: prev.publications.filter(p => p.id !== id)
     }));
@@ -213,21 +227,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Research Interests
   const addResearchInterest = (interest: ResearchInterest) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       researchInterests: [...prev.researchInterests, interest]
     }));
   };
 
   const updateResearchInterest = (interest: ResearchInterest) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       researchInterests: prev.researchInterests.map(ri => ri.id === interest.id ? interest : ri)
     }));
   };
 
   const deleteResearchInterest = (id: string) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       researchInterests: prev.researchInterests.filter(ri => ri.id !== id)
     }));
@@ -235,21 +249,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Experience
   const addExperience = (experience: Experience) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       experiences: [experience, ...prev.experiences]
     }));
   };
 
   const updateExperience = (experience: Experience) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       experiences: prev.experiences.map(e => e.id === experience.id ? experience : e)
     }));
   };
 
   const deleteExperience = (id: string) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       experiences: prev.experiences.filter(e => e.id !== id)
     }));
@@ -257,21 +271,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Projects
   const addProject = (project: Project) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       projects: [project, ...prev.projects]
     }));
   };
 
   const updateProject = (project: Project) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       projects: prev.projects.map(p => p.id === project.id ? project : p)
     }));
   };
 
   const deleteProject = (id: string) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       projects: prev.projects.filter(p => p.id !== id)
     }));
@@ -279,7 +293,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Skills
   const updateSkillCategories = (categories: SkillCategory[]) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       skillCategories: categories
     }));
@@ -287,21 +301,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Leadership
   const addLeadership = (activity: LeadershipActivity) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       leadership: [activity, ...prev.leadership]
     }));
   };
 
   const updateLeadership = (activity: LeadershipActivity) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       leadership: prev.leadership.map(l => l.id === activity.id ? activity : l)
     }));
   };
 
   const deleteLeadership = (id: string) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       leadership: prev.leadership.filter(l => l.id !== id)
     }));
@@ -309,21 +323,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Announcements
   const addAnnouncement = (announcement: Announcement) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       announcements: [announcement, ...prev.announcements]
     }));
   };
 
   const updateAnnouncement = (announcement: Announcement) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       announcements: prev.announcements.map(a => a.id === announcement.id ? announcement : a)
     }));
   };
 
   const deleteAnnouncement = (id: string) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       announcements: prev.announcements.filter(a => a.id !== id)
     }));
@@ -337,21 +351,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
       read: false
     };
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       messages: [newMessage, ...prev.messages]
     }));
   };
 
   const markMessageRead = (id: string) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       messages: prev.messages.map(m => m.id === id ? { ...m, read: true } : m)
     }));
   };
 
   const deleteMessage = (id: string) => {
-    setData(prev => ({
+    updateData(prev => ({
       ...prev,
       messages: prev.messages.filter(m => m.id !== id)
     }));
@@ -366,7 +380,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       const parsed = JSON.parse(jsonString);
       if (parsed.profile && parsed.publications) {
-        setData(parsed);
+        updateData(() => parsed);
         return true;
       }
     } catch (e) {
@@ -377,7 +391,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const resetToDefaultData = () => {
     setData(initialPortfolioData);
-    localStorage.removeItem(STORAGE_KEY);
+    clearPortfolioStorage();
   };
 
   return (
