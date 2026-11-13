@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { Shield, Lock, Eye, EyeOff, ArrowLeft, KeyRound, AlertCircle } from 'lucide-react';
+import { ForgotPasskey } from './ForgotPasskey';
 
 export const AdminLogin: React.FC = () => {
   const { loginAdmin, setActiveView } = usePortfolio();
@@ -8,6 +9,11 @@ export const AdminLogin: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+
+  if (showForgot) {
+    return <ForgotPasskey onBack={() => setShowForgot(false)} />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,6 +107,17 @@ export const AdminLogin: React.FC = () => {
               <KeyRound className="w-4 h-4" />
               <span>{isLoading ? 'Verifying...' : 'Unlock Admin Dashboard'}</span>
             </button>
+
+            {/* Forgot Passkey */}
+            <div className="text-center pt-1">
+              <button
+                type="button"
+                onClick={() => setShowForgot(true)}
+                className="text-xs text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors underline underline-offset-2"
+              >
+                Forgot your passkey?
+              </button>
+            </div>
           </form>
 
         </div>
