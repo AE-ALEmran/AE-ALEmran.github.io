@@ -943,6 +943,45 @@ export const AdminDashboard: React.FC = () => {
                 </button>
               </div>
 
+              {/* Google Scholar & ResearchGate Auto-Sync Card */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-brand-500/10 via-sky-500/5 to-emerald-500/10 border border-brand-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      Connected to Google Scholar & ResearchGate
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 font-mono text-[10px]">
+                      ID: 6wAa7doAAAAJ
+                    </span>
+                  </div>
+                  <p className="text-slate-500 dark:text-slate-400 text-[11px]">
+                    Automated weekly sync runs via GitHub Actions (<code className="font-mono">sync-scholar.yml</code>). When any paper is added on Scholar or ResearchGate, it updates and republishes your website.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href="https://scholar.google.com/citations?user=6wAa7doAAAAJ&hl=en"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-800 text-slate-700 dark:text-slate-200 font-semibold hover:bg-slate-50 dark:hover:bg-navy-850 flex items-center space-x-1"
+                  >
+                    <span>Scholar (56+ Cites)</span>
+                    <ExternalLink className="w-3 h-3 opacity-60" />
+                  </a>
+                  <a
+                    href="https://www.researchgate.net/profile/Md-Emran-12?ev=hdr_xprf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center space-x-1"
+                  >
+                    <span>ResearchGate</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+
               {/* Add / Edit Publication Form Modal */}
               {(isAddingPub || editingPub) && (
                 <div className="p-6 rounded-2xl bg-slate-50 dark:bg-navy-950 border border-brand-500/30 space-y-4">

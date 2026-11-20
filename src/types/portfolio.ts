@@ -19,6 +19,9 @@ export interface Publication {
   bibtex?: string;
   keywords?: string[];
   pdfUrl?: string;
+  citations?: number;
+  scholarUrl?: string;
+  researchGateUrl?: string;
 }
 
 export interface ResearchInterest {
@@ -169,6 +172,8 @@ export interface PortfolioProfile {
     oralPresentations: number;
     totalCitationsEstimate?: string;
     peerReviewCount?: number;
+    hIndex?: number;
+    i10Index?: number;
   };
 }
 

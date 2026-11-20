@@ -15,6 +15,7 @@ import { Contact } from './components/sections/Contact';
 import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { ResetPasskey } from './components/admin/ResetPasskey';
+import { InteractiveBackground } from './components/common/InteractiveBackground';
 
 /** Extract reset token from URL hash like #admin-reset?token=XXXX */
 function getResetToken(): string | null {
@@ -64,9 +65,10 @@ export const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-slate-100 transition-colors duration-200 relative">
+      <InteractiveBackground />
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         <Hero />
         <About />
         <ResearchInterests />

@@ -107,9 +107,14 @@ export const Hero: React.FC = () => {
                   href={profile.socialLinks.googleScholar}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-navy-900/80 hover:bg-brand-50 dark:hover:bg-brand-950/60 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 border border-slate-200 dark:border-navy-800 transition-colors"
+                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-500/10 dark:bg-brand-950/70 hover:bg-brand-500/20 text-brand-700 dark:text-brand-300 border border-brand-500/30 transition-all shadow-sm"
+                  title="Google Scholar Profile (56+ Citations, h-index 5)"
                 >
+                  <Award className="w-3.5 h-3.5 text-brand-500" />
                   <span>Google Scholar</span>
+                  <span className="px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-800 dark:text-brand-200 font-mono text-[10px]">
+                    56+ Cites
+                  </span>
                   <ExternalLink className="w-3 h-3 opacity-60" />
                 </a>
 
@@ -117,9 +122,14 @@ export const Hero: React.FC = () => {
                   href={profile.socialLinks.researchGate}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-navy-900/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-navy-800 transition-colors"
+                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 dark:bg-emerald-950/70 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 transition-all shadow-sm"
+                  title="ResearchGate Profile (Md-Emran-12)"
                 >
+                  <BookOpen className="w-3.5 h-3.5 text-emerald-500" />
                   <span>ResearchGate</span>
+                  <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 font-mono text-[10px]">
+                    Verified
+                  </span>
                   <ExternalLink className="w-3 h-3 opacity-60" />
                 </a>
 

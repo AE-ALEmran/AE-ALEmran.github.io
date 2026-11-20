@@ -20,8 +20,8 @@ export const initialPortfolioData: PortfolioData = {
     academicResumePdfUrl: "./Md_Al_Emran_Academic_CV.pdf",
     socialLinks: {
       linkedin: "https://www.linkedin.com/in/md-al-emran-eee/",
-      googleScholar: "https://scholar.google.com/citations?user=MdAlEmran",
-      researchGate: "https://www.researchgate.net/profile/Md-Al-Emran",
+      googleScholar: "https://scholar.google.com/citations?user=6wAa7doAAAAJ&hl=en",
+      researchGate: "https://www.researchgate.net/profile/Md-Emran-12?ev=hdr_xprf",
       ieeeXplorer: "https://ieeexplore.ieee.org/author/md-al-emran",
       orcid: "https://orcid.org/",
       github: "https://github.com/alemranak13"
@@ -30,7 +30,7 @@ export const initialPortfolioData: PortfolioData = {
       journalPapers: 3,
       ieeeConferences: 16,
       oralPresentations: 10,
-      totalCitationsEstimate: "50+",
+      totalCitationsEstimate: "56+",
       peerReviewCount: 2
     }
   },
